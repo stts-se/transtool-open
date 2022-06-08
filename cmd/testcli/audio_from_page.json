@@ -1,0 +1,4 @@
+{
+    "message_type": "audio_from_page",
+    "payload": "{\"start\":6000,\"end\":10000,\"id\":\"Skolinspektionen_Fridolin_Speechpool_opus_0002}\",\"audio\":\"Skolinspektionen_Fridolin_Speechpool.opus\"}"
+}

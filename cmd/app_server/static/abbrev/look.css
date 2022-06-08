@@ -1,0 +1,205 @@
+#textarea {
+}
+
+.textarea {
+    height: 200px;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+strong {
+    font-weight: bold;
+}
+
+.selected-font {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    text-align: left;
+}
+
+.headertxt {
+    animation-duration: 1s;
+    animation-name: slidein;
+}
+
+.title {
+    animation-duration: 1s; 
+    animation-name: slidein;
+}
+
+.pagename {
+    text-transform: capitalize;
+    /*text-transform: capitalize;*/
+    font-size: 150%;
+    font-weight: bold;
+}
+
+/* Section label (Messages, Abbrevs, etc)*/
+.label {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    font-size: 0.8;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    text-align: left;
+    text-transform: lowercase;
+    /*text-transform: capitalize;*/
+    font-variant: small-caps;
+    margin-bottom: 12px;
+}
+
+@-webkit-keyframes fadeIn {
+    from {opacity: 0} 
+    to {opacity: 1}
+}
+
+@keyframes fadeIn {
+    from {opacity: 0} 
+    to {opacity: 1}
+}
+
+@keyframes slidein {
+    from {
+	margin-left: 100%;
+	width: 300%; 
+    }
+
+    to {
+	margin-left: 0%;
+	width: 100%;
+    }
+}
+
+
+
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+@keyframes spin_anti { 100% { -webkit-transform: rotate(-360deg); transform:rotate(-360deg); } }
+
+
+.dropdown {
+    text-decoration: none;
+    /* color: #007bff; */
+    background-color: white;
+    background-image: none;
+    border-color: black !important;
+    border: 1pt solid transparent;
+    /* border-color: #007bff !important; */
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    /* padding: .375rem .75rem; */
+    padding: .1rem .1rem;
+    font-size: .9rem;
+    /* line-height: 1.2; */
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.dropdown:disabled {
+    color: grey;
+}
+
+.btn:not(:disabled):not(.disabled) {
+    cursor: pointer;
+}
+
+.btn {
+    text-decoration: none;
+    color: #007bff;
+    background-color: transparent;
+    background-image: none;
+    border-color: #007bff;
+    border: 1pt solid transparent;
+    border-color: #007bff !important;
+    border-radius: .25rem;
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: .215rem .5rem;
+    font-size: 1rem;
+    /* line-height: 1.5; */
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.btn:hover:not(:disabled) {
+    background: #007bff;
+    color: white;
+}
+
+.btn.black:hover:not(:disabled) {
+    color: #007bff;
+    background: none;
+}
+
+.btn.red:hover:not(:disabled) {
+    background: none;
+    color: darkred;
+}
+
+.btn.red {
+    color: red;
+    background: none;
+    border-color: red !important;
+    cursor: pointer;
+    vertical-align: top;
+}
+
+.noborder {
+    border: none;
+}
+
+.btn.icon:hover:not(:disabled) {
+    color: #007bff;
+    background: none;
+}
+
+.icon {
+    border: none;
+    padding: 0 .4rem .3rem .4rem;
+    color: inherit;
+}
+
+.highlightonhover:hover {
+    color: grey;
+}
+
+.btn:disabled {
+    color: grey;
+    border-color: grey !important;
+}
+
+.visualiser {
+    border-radius: .50rem;
+}
+
+.resizable {    
+    overflow: auto;
+    resize: both;
+}
+
+ul {
+    margin-block-start: 3pt !important; /* override chrome settings */
+}
+
+.nobullet {
+    list-style: none;
+    margin-left: -40px;
+}

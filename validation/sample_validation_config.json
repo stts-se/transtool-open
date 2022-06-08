@@ -1,0 +1,37 @@
+{
+    "page_status_names": "normal delete skip",
+    "status_names": "unchecked ok ok2 skip",
+    "valid_chars_regexp": "[\\p{L} _.,#!?:'\u00A0-]",
+    "label_prefix": "#",
+    "label_suffix": "",
+    "labels": "#AGENT #CUSTOMER #OVERLAP #UNKNOWN #NOISE #LAUGH #COUGH #UNTRANSCRIBED #eeh #mm #hmm #åå #mhm",
+    "token_split_regexp": "[ \\n,.!?\u00A0]",
+    "trans_must_match": [
+	{
+	    "rule_name": "trans_initial_label",
+	    "regexp": "^\\s*#(AGENT|CUSTOMER|OVERLAP|UNKNOWN|NOISE)",
+	    "level": "fatal",
+	    "message": "Cannot OK a chunk that doesn't start with one of #AGENT, #CUSTOMER, #OVERLAP, #UNKNOWN or #NOISE"
+	}
+    ],
+    "trans_must_not_match": [
+	{
+	    "rule_name": "label_without_trans",
+	    "regexp": "^\\s*#(AGENT|CUSTOMER)\\s*$",
+	    "level": "error",
+	    "message": "There must be a transcription following the label"
+	},
+	{
+	    "rule_name": "repeated_full_stops",
+	    "regexp": "[.]\\s*[.]",
+	    "level": "warning",
+	    "message": "Transcription must not include repeated full stops"
+	},
+	{
+	    "rule_name": "initial_only_labels",
+	    "regexp": "[^\\s]+\\s?#(AGENT|CUSTOMER)",
+	    "level": "error",
+	    "message": "#AGENT and #CUSTOMER labels may only occur at start of transcription"
+	}
+    ]
+}

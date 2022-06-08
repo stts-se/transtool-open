@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+	<title>Transtool</title>
+	<meta charset="utf-8">
+	
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="-1">
+	<meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+
+	<link rel="stylesheet" href="layout.css">
+	<link rel="stylesheet" href="style.css">
+    </head>
+
+    <body class="selected-font" id="body">
+	<div class="wrapper" id="wrapper">
+
+	    <!-- header row -->
+	    <!-- https://www.freelogodesign.org/preview?lang=en&name=TranzTool&logo=cd283d92-52f4-4407-8c83-b35b4af7d926 -->
+	    <div class="grid-logo"><img class="rounded-border" src="logo.png" width="100" /></div>
+
+	    
+	    <div class="grid-batch_selector">
+		<select id="project-selector"></select>
+		
+	    </div> <!-- <div id="project-stats"></div> -->
+	    <div class="grid-project-stats" id="project-stats"></div>
+	    
+	    <div class="grid-main smallcaps">
+
+		<div id="page_info" class="nosmallcaps" style="text-align: center"></div>
+		<!-- HB 0726 -->
+		<div id="current_page_status_div" style="text-align: center">
+		    <!-- <div id="current_page_statusXX" class="nosmallcaps" style="text-align: center"></div> -->
+		    <span>Status of entire page:</span>
+		    <select style="width: 120pt" id="current_page_status" name="current_page_status">
+			<option value="normal" selected>Normal</option>
+			<option value="skip">Skip</option>
+			<option value="delete">Delete</option>
+		    </select>
+		    <span id="current_page_status_display"></span>
+		</div>
+		<!-- END HB 0726 -->
+		<div id="waveform-pane" class="grid-component rounded-border smallcaps">
+		    <div id="waveform" class="resizable"></div>
+		    <div id="waveform-timeline"></div>
+		</div>
+
+		<!-- NL 20210809: Removed div that closes wrapper? </div> -->
+
+		<div class="grid-navigation">
+		    <div class="grid-component smallcaps" style="text-align: center">
+			<span id="waveform-navigation">
+			    <span class='btn noborder' id='waveform-playpause'>&#x23EF;</span>
+			    <!--
+				 |<span class='btn noborder' id='waveform-skiptofirst'>&#x23EE;</span>
+				 <span class='btn noborder' id='waveform-skipback'>&#x23EA;</span>
+				 <span class='btn noborder' id='waveform-skipforward'>&#x23E9;</span>
+				 <span class='btn noborder' id='waveform-skiptolast'>&#x23ED;</span>
+			    -->
+			</span>		
+			<span id="waveform-zoom"></span>
+		    </div>
+
+		    <div class="smallcaps" style="padding: 10px">
+			<div>transcription editor
+			    <!-- <br /> -->
+			    <span style="margin-bottom:10px">
+				<button disabled id="add_abbrev" title="Add abbrev for the latest word" class="btn">F9</button>
+				<span class="wiggle nosmallcaps" id="reverse_expansion"></span> <span class="wiggle nosmallcaps"
+												      id="asr_info"></span>
+			    </span> <span id="label_names">Labels&#8599</span>
+			</div> 
+			
+			
+			<!-- <button id="fullscreen" title="Show text area only" class="btn">FS</button> -->
+			<!-- <span class="nosmallcaps" style="font-style: italic; width: 100%; display: inline-block">
+			     &lt;&lt; left trans: nyss sa vi det här
+			     </span> -->
+			<!-- HB CHANGE 210920			<div contenteditable="true" style="padding: 10px; width: 760px; height: 60px;" + class resizable -->
+			    <div contenteditable="true" style="padding: 10px;"
+				 class="rounded-border nosmallcaps resizable" id="editor-text-area" rows="4" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>
+			    <!-- <span class="nosmallcaps" style="text-align: right; font-style: italic; width: 100%; display: inline-block">
+				 right trans: senare säger vi det här &gt;&gt;
+				 </span>	 -->
+			    
+			    
+		    </div>
+		    <div id="validation_result" contenteditable="false" style="padding: 10px;"> <!-- class="rounded-border nosmallcaps resizable"> -->
+			</div>
+			
+
+		    <div class="grid-component smallcaps" style="text-align: left">
+
+			    <!-- <div style="margin: 10px" class="hidden">
+				 <span id='save-skip' class="btn" style="background-color:orange">skip</span>
+				 <span id='save-ok' class="btn" style="background-color:lightgreen">save</span>
+				 <span id='save-progress' class="btn" style="background-color:lightblue">save progress</span>
+				 </div> -->
+			    <div id="current_chunk_status_div" class="current_status_div">
+				<!-- current status: --> <span class="nosmallcaps" id="current_chunk_status"></span>
+				<!-- <br/> label: <span class="nosmallcaps" id="labels"></span> -->
+			    </div>
+			    <div style="margin: 10px">
+				<span id='save-progress' title='Save page progress' class="btn hidden"
+				      style="background-color:lightblue">save progress</span>
+				<span id='save-skip-next' class="btn" style="background-color:orange">skip+next</span>
+				<span id='save-ok' title='Save chunk as ok' class="btn"
+				      style="background-color:lightgreen">ok</span>
+				<span id='save-ok-next' class="btn" style="background-color:lightgreen">ok+next</span>
+
+				<span id="waveform-skipback" class='btn icon'>&lt;</span>
+				<span id="waveform-skipforward" class='btn icon'>&gt;</span>
+				<span class="hidden" id="waveform-skiptofirst" class='btn icon'>&laquo;</span>
+				<span class="hidden" id="waveform-skiptolast" class='btn icon'>&raquo;</span>
+				<span id="prev_page_any" title="Go to previous page" class='btn icon'>|&laquo;</span>
+				<span id="prev_page" title="Go to previous page matching query request"
+				      class='btn icon'>&laquo;</span>
+				<span id="next_page" title="Go to next page matching query request" class='btn icon'>&raquo;</span>
+				<span id="next_page_any" title="Go to next page" class='btn icon'>&raquo;|</span>
+
+				<!-- <span id="first_page" title="Go to first chunk" class='btn icon'>|&laquo;</span> -->
+				<!-- <span id="prev_page" title="Go to previous chunk matching request status" class='btn icon'>&laquo;</span> -->
+				<!-- <span id="prev_page_any" title="Go to previous chunk" class='btn icon'>&lt;</span> -->
+				<!-- <span id="next_page_any" title="Go to next chunk" class='btn icon'>&gt;</span> -->
+				<!-- <span id="next_page" title="Go to next chunk matching request status" class='btn icon'>&raquo;</span> -->
+				<!-- <span id="last_page" title="Go to last chunk" class='btn icon'>&raquo;|</span> -->
+			    </div>
+			    <div style="margin: 10px">
+				<span id="reset" class="btn disabled hidden" style="background-color:white">reset</span>
+				<span id="unlock-all" class="btn" style="background-color:lightgrey">release all</span>
+				<span id="start" class="btn" style="background-color:yellow">start</span>
+				<span id="quit" class="btn" style="background-color:yellow">quit</span>
+
+				<!-- <span style="cursor: default" class="btnlabel">play:</span> -->
+				<!-- <span id="play-left" class="btn">left</span> -->
+				<span id="play-selected" class="btn">play selected</span>
+				<!-- <span id="play-right" class="btn">right</span> -->
+				<span id="play-all" class="btn">play all</span> 
+				<span id="asr-request" class="btn asr">asr selected</span>
+				<span id="delete-selected" class="btn" style="background-color:orange">del selected</span>
+			    </div>
+			    <div style="margin: 10px;" class="hidden">
+				<span id='move-left2left-short' class="btn">&lt;l</span>
+				<span id='move-left2right-short' class="btn">l&gt;</span>
+				<span id='move-right2left-short' class="btn">&lt;r</span>
+				<span id='move-right2right-short' class="btn">r&gt;</span>
+				<span id='move-left2left-long' class="btn">&laquo;l</span>
+				<span id='move-left2right-long' class="btn">l&raquo;</span>
+				<span id='move-right2left-long' class="btn">&laquo;r</span>
+				<span id='move-right2right-long' class="btn">r&raquo;</span>
+			    </div>
+
+			    <!-- 
+				 <div style="margin: 10px">
+				 <span id="reset" class="btn" style="background-color:white">reset</span>
+				 <span id="unlock-all" class="btn" style="background-color:lightgrey">release all</span>
+				 <span id="quit" class="btn" style="background-color:yellow">quit</span>
+				 </div>
+			    -->
+			</div>
+
+			<!-- 
+			     <div class="smallcaps" style="padding: 10px">
+			     <span style="text-align: center; width: 100%; display: inline-block">transcription</span><br />
+			     <textarea style="padding: 10px; width: 760px" class="rounded-border nosmallcaps" id="editor-text-area"
+			     rows="4"></textarea>
+			     </div>
+			-->
+			
+			
+			<div class="hidden smallcaps" style="padding: 10px"><span
+										style="text-align: center; width: 100%; display: inline-block">comment</span><br />
+			    <textarea style="padding: 10px; width: 760px" class="rounded-border nosmallcaps" id="comment"
+				      rows="4"></textarea>
+			</div>
+
+		    </div> <!-- navigation -->
+		    
+		    <!-- <div style="padding: 10px; margin-top: 40px" class="nosmallcaps"> -->
+		    <!--     <em> -->
+		    <!-- 	Developed by <a href="https://stts.se">STTS</a> on behalf of <a -->
+		    <!-- 									 href="https://www.speech.kth.se">TMH</a> &#183; -->
+		    <!-- 	<a href="https://github.com/stts-se/transtool">github.com/stts-se/transtool</a> -->
+		    <!--     </em> -->
+		    <!-- </div> -->
+
+		    
+
+		    <!-- <div class="grid-rightpanel smallcaps"> -->
+		    <div class="grid-component smallcaps">
+
+			<!--<details open> -->
+			<details open>
+			    <summary>options</summary>
+			    <div style="width: 190pt">
+
+				<table>
+				    <tbody>
+
+					<tr><td>user</td><td class="nosmallcaps" id="username"></td></tr>
+					
+					<tr>
+					    <td>set status</td>
+					    <td>
+						<select style="width: 120pt" name="setstatus" id="setstatus">
+						    <option value="ok" selected>ok</option>
+						    <option value="ok2">ok2</option>
+						</select>
+					    </td>
+					</tr>
+
+					<tr>
+					    <td>request (page):</td>
+
+					    <tr>
+						<td><em>&nbsp;&nbsp;page status</em></td>
+						<td>
+						    <select style="width: 120pt" name="request_pagestatus" id="request_pagestatus">
+							<option selected value="normal">normal</option>
+							<option value="skip">skip</option>
+							<option value="delete">delete</option>
+							<option value="any">any</option>
+						    </select>
+						</td>
+					    </tr>
+
+					    <tr>
+						<td>request (chunk):</td>
+
+						<tr>
+						    <td><em>&nbsp;&nbsp;status</em></td>
+						    <td>
+							<select style="width: 120pt" name="requeststatus" id="requeststatus">
+							    <option selected value="unchecked">unchecked</option>
+							    <option value="checked">checked</option>
+							    <option value="ok">ok</option>
+							    <option value="ok2">ok2</option>
+							    <option value="skip">skip</option>
+							    <option value="in progress">in progress</option>
+							    <option value="any">any</option>
+							</select>
+						    </td>
+						</tr>
+
+						<tr>
+						    <td><em>&nbsp;&nbsp;source</em></td>
+						    <td>
+							<select style="width: 120pt" name="requestsource" id="requestsource">
+							    <!-- <option value="nikolaj">nikolaj</option> -->
+							    <!-- <option value="hanna">hanna</option> -->
+							    <!-- <option value="jessica">jessica</option> -->
+							    <!-- <option value="harald">harald</option> -->
+
+							    <!-- <option value="kamilla">kamilla</option> -->
+							    <!-- <option value="gunn">gunn</option> -->
+							    <!-- <option value="solveig">solveig</option> -->
+							    <!-- <option value="karianne">karianne</option> -->
+							    <!-- <option value="stine">stine</option> -->
+							    <!-- <option value="mathias">mathias</option> -->
+							    <!-- <option value="maren">maren</option> -->
+
+							    <!-- <option value="pre_chunker">pre_chunker</option> -->
+							    <option selected value="any">any</option>
+							</select>
+						    </td>
+						</tr>
+
+						<tr>
+						    <td><em>&nbsp;&nbsp;audio</em></td>
+						    <td>
+							<select style="width: 120pt" name="requestaudiofile" id="requestaudiofile">
+							    <!-- fetches available values from db -->
+							</select>
+						    </td>
+						</tr>
+
+						<tr>
+						    <td><em>&nbsp;&nbsp;transre</em></td>
+						    <td>
+							<input style="width: 120pt" name="requesttransre" id="requesttransre" />
+						    </td>
+						</tr>
+
+					<tr>
+					  <td><em>&nbsp;&nbsp;invalid only</em></td>
+					  <td>
+					    <input type="checkbox" style="width: 120pt" name="requestinvalidonly" id="requestinvalidonly" />
+					  </td>
+					</tr>
+					
+					<!-- - HB added start index option  -->
+					<tr>
+					  <td><em>&nbsp;&nbsp;start index</em></td>
+					  <td>
+					    <input style="width: 120pt" name="start_index" id="start_index" />
+					  </td>
+					</tr>
+
+
+
+				    </tbody>
+				</table>
+				
+			    </div>
+
+
+			    <div class="hidden" id="context-view">context: <span class="nosmallcaps" id="context"></span> </div>
+
+
+			    <table>
+				<tbody>
+				    <tr class="hidden">
+					<td>autoplay</td>
+					<td><input type="checkbox" name="autoplay" id="autoplay"></td>
+				    </tr>
+				    <tr class="asr" >
+					<td>autorun asr</td>
+					<td><input type="checkbox" name="autoasr" id="autoasr"></td>
+				    </tr>
+				    <tr class="asr">
+					<td>autoplay on asr</td>
+					<td><input type="checkbox" name="autoplayonasr" id="autoplayonasr"></td>
+				    </tr>
+				    <tr class="asr">
+				      <td>
+					<label for="asr_lang">language</label>
+					<select name="asr_lang" id="asr_lang">
+					  <!-- TODO These should come from the server -->
+					  <option value="en-GB">en-GB</option>
+					  <option value="en-US">en-US</option>
+					  <option value="en-IE">en-IE</option>
+					  <option value="sv-SE">sv-SE</option>
+					  <option value="no-NO">no-NO</option>
+					  <option value="da-DK">da-DK</option>
+					  <option value="fi-FI">fi-FI</option>
+					  <option value="fr-FR">fr-FR</option>
+					  <option value="es-ES">es-ES</option>
+					</select>
+					
+				      </td>
+				      
+				    </tr>
+				</tbody>
+			    </table>
+			    <span id="clear_local_storage" class="btn nosmallcaps hidden">clear local storage</span>
+			</details>
+
+			<!--<details style="margin-top: 20px; width: 700px"> -->
+			<details>
+			    <summary>shortcuts</summary>
+			    <span class="nosmallcaps" style="overflow-y: scroll">
+				<table>
+				    <thead>
+					<tr>
+					    <th>Key</th>
+					    <th>Action</th>
+					</tr>
+				    </thead>
+				    <tbody id="shortcuts"></tbody>
+				</table>
+			    </span>
+			</details>
+
+			<!-- <details open style="margin-top: 20px; width: 700px"> -->
+			<details>
+			    <summary style="display: inline list-item">messages</summary><span id="clear_messages" class="btn icon noborder" title="Click to clear messages">&#x1f5d1;</span>
+			    <div id="messages" class="nosmallcaps" style="overflow-y: scroll; max-height: 250px">
+			    </div>
+			</details>
+
+			<!-- <details style="margin-top: 20px; width: 700px">-->
+			<details>
+			    <summary>abbrevs</summary>
+			    <span style="overflow-y: scroll; max-height: 250px">
+				<table id="abbrev_list_names_table">
+				    <tbody id="abbrev_list_names"></tbody>
+				</table>
+				<div style="margin-top: 5px"><a class="btn" href="/abbrev" target="_blank" rel="noopener noreferrer">manage abbrevs</a></div>
+			    </span>
+			</details>
+
+			<!-- <details style="margin-top: 20px; width: 700px;" open="closed"> -->
+			<details>
+			    <summary style="display: inline list-item">stats
+			    </summary>
+			    <span class="btn icon noborder" id="load_stats"
+				  title="Click to reload stats">&#x21bb;</span>
+			    <span class="nosmallcaps">Updated <span id="stats_timestamp"></span></span>
+			    <!-- <div class="nosmallcaps" id="stats_for_audio"></div> -->
+			    <!-- <table class="nosmallcaps"> -->
+			    <!-- 	<tbody id="stats"></tbody> -->
+			    <!-- </table> -->
+			    <div id="stats"></div>
+			</details>
+
+		    </div>
+		</div>
+
+		    <div class="grid-search-result">
+		      <table>
+			<tr><td></td></tr>
+			<tr><td></td></tr>
+		      </table>
+		    </div>
+		    
+		    
+	    </div> <!-- main -->
+	    <!-- </div> HB moved from before details for testing -->
+	    <!-- EXTERNAL LIBRARIES -->
+
+	    <!-- http://wavesurfer-js.org -->
+	    <!-- <script src="https://unpkg.com/wavesurfer.js"></script> -->
+	    <!-- <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.regions.min.js"></script> -->
+	    <!-- <script src="https://unpkg.com/wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js"></script> -->
+
+	    <script src="lib/wavesurfer-js/wavesurfer.js"></script>
+	    <script src="lib/wavesurfer-js/wavesurfer.regions.min.js"></script>
+	    <script src="lib/wavesurfer-js/wavesurfer.timeline.min.js"></script>
+	    <!-- <script src="lib/wavesurfer-js/wavesurfer.cursor.min.js"></script> -->
+	    <!-- <script src="lib/wavesurfer-js/wavesurfer.spectrogram.min.js"></script>
+	    -->
+	    <!-- INTERNAL LIBRARIES -->
+	    <script src="lib.js"></script>
+	    <script src="waveform.js"></script>
+
+	    <!-- APP CODE -->
+	    <script src="validation.js"></script>
+	    <script src="app.js"></script>
+	    <script src="save_text.js"></script>
+	    <script src="abbrev/app.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,121 @@
+.wrapper{
+    display: grid;
+    grid-gap: 1em;
+    grid-template-columns: repeat(12, 1fr) auto;
+    /* grid-template-rows: auto; */ /* minmax(100px, auto); */
+    grid-auto-rows: minmax(70px, auto);
+}
+
+.wrapper > div {
+    background: #eee;
+    border: #333 solid 1px;
+}
+
+.wrapper > div:nth-child(even) {
+    background: #ddd;
+}
+
+
+.grid-logo{
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+}
+
+.grid-batch-select{
+    grid-column: 2 / span 3;
+    grid-row: 1;
+}
+
+.grid-batch-stats{
+    grid-column: 5 / span 3;
+    grid-row: 1;
+}
+
+.grid-file-info{
+    grid-column: 2 / span 3;
+    grid-row: 2;
+}
+
+.grid-page-status{
+    grid-column: 5 / span 3;
+    grid-row: 2;
+}
+
+.grid-page-comment{
+    grid-column: 8 / span 4;
+    grid-row: 2;
+}
+
+.grid-waveform {
+    grid-column:1 / 14;
+    grid-row: 3;
+    /* align-self: center; */
+    /* justify-self: center; */
+}
+
+.grid-waveform-zoom {
+    grid-column:1 / 14;
+    grid-row: 4;
+    /* align-self: center; */
+    /* justify-self: center; */
+}
+
+.grid-editor {
+    grid-column:2 / 10;
+    grid-row: 5;
+    /* align-self: center; */
+    /* justify-self: center; */
+}
+
+.grid-editor-validation {
+    grid-column:10 / 12;
+    grid-row: 5;
+    /* align-self: center; */
+    /* justify-self: center; */
+}
+
+
+.grid-control-buttons {
+    grid-column:4 / 10;
+    grid-row: 6;
+    /* align-self: center; */
+    /* justify-self: center; */
+}
+
+.grid-details{
+    
+    grid-column: 1 / 14;
+    grid-row:7;
+
+    display: grid;
+    grid-template-columns: 2 / 10;
+    grid-template-rows: auto;
+    grid-gap: 1em;
+}
+
+/* .grid-options-details{ */
+/*     grid-column:1 / 2; */
+/*     grid-row: 1; */
+/* } */
+
+/* .grid-shortcuts-details{ */
+/*     grid-column: 2 / 3; */
+/*     grid-row: 1; */
+/* } */
+
+
+/* .grid-messages-details{ */
+/*     grid-column:1 / 2; */
+/*     grid-row: 2; */
+/* } */
+
+/* .grid-abbrevs-details{ */
+/*     grid-column: 2 / 3; */
+/*     grid-row: 2; */
+/* } */
+
+/* .grid-stats-details{ */
+/*     grid-column:1 / 2; */
+/*     grid-row: 3; */
+/* } */

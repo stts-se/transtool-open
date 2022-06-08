@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<!-- <link rel="stylesheet" type="text/css" href="../look.css">  -->
+      <link rel="stylesheet" type="text/css" href="look.css">
+      <link rel="stylesheet" type="text/css" href="layout.css">
+      <title>Abbrevs</title>
+    </head>
+    <body class="grid-container selected-font">
+
+	<div class="grid-pagetitle">
+	    <span class="pagename">Abbrevs</span>
+	</div>
+	
+	<div class="grid-leftpane">
+	    <div class="label">Abbrev lists</div>
+	    <table>
+		<thead></thead>
+		<tbody id="abbrev_list_names"></tbody>
+	    </table>
+
+	    <div style="margin-top: 15px">
+		Add new list of abbreviations
+	    </div>
+	    <input id="new_abbrev_list_name" placeholder="List name" type="text" required>
+	    <button class="btn" id="create_new_abbrev_list_name" >Create</button>
+	</div>
+	
+	<div class="grid-bottompane">
+	    <div class="label">Messages</div>
+	    <div id="messages"></div>
+	</div>
+	
+	<div class="grid-rightpane">
+
+	    <div class="label">
+		Selected list: <span id="selected_list_name">-</span> <span id="abbrev_count"></span>
+	    </div>
+
+	    <div style="margin-bottom: 30px">
+		<p>
+		    <!-- Add new abbreviation<br/> -->
+		    <input id="new_abbrev" type="text" placeholder="Abbrev">
+		    <input id="new_expansion" type="text" placeholder="Expansion"><!--<div class="btn" id="add_abbrev_btn" disabled>Add</div>-->
+		    <button class="btn" id="add_abbrev_btn" title="Add new abbreviation" disabled>Add</button>
+		</p>
+	    </div>
+
+	    <div style="margin-bottom: 10px">
+		<input id="abbrev_filter" type="text" placeholder="Abbrev" />
+		<input id="expansion_filter" type="text" placeholder="Expansion"/>
+		<button class="btn" id="filter_abbrev_btn" title="Filter abbrev list" disabled>Filter</button>
+	    </div>
+
+	    <div class="resizable" style="overflow: scroll; height: 500px">
+		<table>
+		    <thead>
+			<!-- <tr>
+			     <th style="width: 50%" id="abbrev_list_h_abbrev">Abbrev</th>
+			     <th style="width: 50%" id="abbrev_list_h_expansion">Expansion</th>
+			     <th style="display: none">Delete</th>
+			     </tr>		     -->
+		    </thead>
+		    <tbody id="abbrevs_table">
+		</tbody>
+		</table>
+	    </div>
+
+	</div>
+	
+	<script src="abbrevs.js"></script>
+    </body>
+</html>
