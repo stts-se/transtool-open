@@ -2249,12 +2249,22 @@ function autoplayEnabledFunc() {
 }
 
 function loadKeyboardShortcuts() {
+    console.log("loadKeyboardShortcuts");
     let ele = document.getElementById("shortcuts");
     ele.innerHTML = "";
 
     if (!has_asr) {
-	delete shortcuts['ctrl alt Enter'];
+	delete shortcuts['ctrl alt Enter'];	
     }
+
+    if (!document.getElementById("move_boundaries_shortcuts").checked) {
+	console.log("Not using move_boundaries_shortcuts");
+	delete shortcuts['ctrl ArrowLeft'];
+	delete shortcuts['ctrl ArrowRight'];
+	delete shortcuts['shift ArrowLeft'];
+	delete shortcuts['shift ArrowRight'];
+    }
+
 
 
     
@@ -2315,10 +2325,13 @@ function deleteAllChunks() {
 }
 
 const shortcuts = {
-    // 'ctrl ArrowLeft': { funcDesc: `Move left boundary ${gloptions.boundaryMovementShort} ms to the left`, buttonID: 'move-left2left-short' },
-    // 'ctrl ArrowRight': { funcDesc: `Move left boundary ${gloptions.boundaryMovementShort} ms to the right`, buttonID: 'move-left2right-short' },
-    // 'shift ArrowLeft': { funcDesc: `Move right boundary ${gloptions.boundaryMovementShort} ms to the left`, buttonID: 'move-right2left-short' },
-    // 'shift ArrowRight': { funcDesc: `Move right boundary ${gloptions.boundaryMovementShort} ms to the right`, buttonID: 'move-right2right-short' },
+
+    // FIND KEY COMBINATON THAT DOESN'T CLASH WITH STH ELSE!
+    
+    'ctrl ArrowLeft': { funcDesc: `Move left boundary ${gloptions.boundaryMovementShort} ms to the left`, buttonID: 'move-left2left-short' },
+    'ctrl ArrowRight': { funcDesc: `Move left boundary ${gloptions.boundaryMovementShort} ms to the right`, buttonID: 'move-left2right-short' },
+    'shift ArrowLeft': { funcDesc: `Move right boundary ${gloptions.boundaryMovementShort} ms to the left`, buttonID: 'move-right2left-short' },
+    'shift ArrowRight': { funcDesc: `Move right boundary ${gloptions.boundaryMovementShort} ms to the right`, buttonID: 'move-right2right-short' },
 
     // 'ctrl ArrowUp': { funcDesc: `Move left boundary ${gloptions.boundaryMovementLong} ms to the left`, buttonID: 'move-left2left-long' },
     // 'ctrl ArrowDown': { funcDesc: `Move left boundary ${gloptions.boundaryMovementLong} ms to the right`, buttonID: 'move-left2right-long' },
