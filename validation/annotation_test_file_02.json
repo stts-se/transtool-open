@@ -1,0 +1,58 @@
+{
+  "page": {
+   "start": 0,
+   "end": 41215,
+   "id": "tillstud_demo_2_oskar_tal_2_2020-08-24_143626_6d2c4d72_opus_0001",
+   "audio": "tillstud_demo_2_oskar_tal_2_2020-08-24_143626_6d2c4d72.opus"
+  },
+    "current_status": {
+	"name":"normal"
+    }, 
+    
+  "chunks": [
+   {
+    "uuid": "36e9c25a-a8d2-11eb-bf21-6c626d45cf80",
+    "start": 28516,
+    "end": 30960,
+    "trans": "hejom",
+    "current_status": {
+     "name": "ok",
+     "source": "nikolaj",
+     "timestamp": "2021-04-29 12:14:00"
+    }
+   },
+   {
+    "uuid": "36e9c287-a8d2-11eb-bf21-6c626d45cf80",
+    "start": 31290,
+    "end": 36230,
+    "trans": "där åsa romson och jag kommer presentera det första steget i regeringens",
+    "current_status": {
+     "name": "ok",
+     "source": "nikolaj",
+     "timestamp": "2021-04-29 12:14:21"
+    }
+   },
+   {
+    "uuid": "36e9c2aa-a8d2-11eb-bf21-6c626d45cf80",
+    "start": 36500,
+    "end": 36310,
+    "trans": "stora reformprogram",
+    "current_status": {
+     "name": "ok",
+     "source": "nikolaj",
+     "timestamp": "2021-04-29 12:14:28"
+    }
+   },
+   {
+    "uuid": "36e9c2b6-a8d2-11eb-bf21-6c626d45cf80",
+    "start": 39030,
+    "end": 41160,
+    "trans": "för att ta stegen mot",
+    "current_status": {
+     "name": "ok",
+     "source": "nikolaj",
+     "timestamp": "2021-04-29 12:14:35"
+    }
+   }
+  ]
+ }
