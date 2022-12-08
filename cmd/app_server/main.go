@@ -463,12 +463,14 @@ func listenToClient(conn *websocket.Conn, clientID dbapi.ClientID) {
 		case "asr-request":
 			log.Info("[main] asr-request called!\n")
 
-			if !googleASR.Initialised() {
-				msg := "ASR not initialised on server."
-				log.Error(msg)
-				wsError(conn, msg, msg)
-				return
-			}
+			//HB
+			//if !googleASR.Initialised() {
+			//	msg := "ASR not initialised on server."
+			//	log.Error(msg)
+			//	wsError(conn, msg, msg)
+			//	return
+			//}
+			//END HB
 
 			var payload protocol.ASRRequest
 			err := json.Unmarshal([]byte(msg.Payload), &payload)
@@ -479,6 +481,7 @@ func listenToClient(conn *websocket.Conn, clientID dbapi.ClientID) {
 				return
 			}
 			log.Info("[main] payload: %#v", payload)
+			//HB
 			gCloudASR(conn, payload)
 
 		case "validate":
@@ -649,9 +652,16 @@ func gCloudASR(conn *websocket.Conn, payload protocol.ASRRequest) {
 	log.Info("[main] chunk: %#v", chnk)
 	log.Info("[main] asr config: %#v", config)
 
-	res, err := googleASR.Process(config, audioPath, chnk)
+	//HB
+	//res, err := googleASR.Process(config, audioPath, chnk)
+	res, err := abairASR.Process(config, audioPath, chnk)
+	//END HB
+	
 	if err != nil {
-		msg := fmt.Sprintf("googleASR.Process error: %v", err)
+	       	//HB
+	        //msg := fmt.Sprintf("googleASR.Process error: %v", err)
+		msg := fmt.Sprintf("abairASR.Process error: %v", err)
+		//END HB
 		log.Error(msg)
 		message := Message{
 			Error: msg,
@@ -1033,7 +1043,10 @@ func serveAudio(w http.ResponseWriter, r *http.Request) {
 }
 
 func hasASR(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "%v\n", googleASR.Initialised())
+     //HB 
+     //fmt.Fprintf(w, "%v\n", googleASR.Initialised())
+     fmt.Fprintf(w, "%v\n", true)
+     //END HB
 }
 
 func reloadValidationConfig(w http.ResponseWriter, r *http.Request) {
@@ -1102,7 +1115,10 @@ type Config struct {
 	EnableAutoplay *bool `json:"enable_autoplay"`
 }
 
+//HB
 var googleASR modules.GoogleASR
+var abairASR modules.AbairASR
+//END HB
 var aiExtractor ffprobe.InfoExtractor
 var validator validation.Validator
 
@@ -1253,6 +1269,12 @@ func main() {
 			log.Warning("Failed to initialise GCloud ASR: %v", err)
 		}
 	}
+
+	abairASR, err = modules.NewAbairASR()
+	if err != nil {
+		log.Warning("Failed to initialise Abair ASR: %v", err)
+	}
+
 
 	aiExtractor, err = ffprobe.NewInfoExtractor()
 	if err != nil {
