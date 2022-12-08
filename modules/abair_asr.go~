@@ -1,0 +1,91 @@
+package main
+
+import (
+        "os"
+	"encoding/json"
+	"bytes"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+    	b64 "encoding/base64"
+    )
+
+
+func check(e error) {
+    if e != nil {
+        panic(e)
+    }
+}
+
+
+type AsrRequest struct {
+    RecogniseBlob string `json:"recogniseBlob"`
+    Method   string `json:"method"`
+    Developer bool `json:"developer"`
+}
+
+type AsrResponse struct {
+	AudioFilePath string `json:"audioFilePath"`
+	Transcriptions []Transcription `json:"transcriptions"`
+	Duration float64 `json:"duration"`
+}
+
+type Transcription struct {
+     Utterance string `json:"utterance"`
+}
+
+func main() {
+
+        audioFile := os.Args[1]
+	//fmt.Println("audioFile:", audioFile)
+
+ 	data, err := os.ReadFile(audioFile)
+    	check(err)
+ 
+
+	encodedAudio := b64.StdEncoding.EncodeToString([]byte(data))
+
+
+	httpposturl := "https://phoneticsrv3.lcs.tcd.ie/asr_api/recognise"
+	//fmt.Println("HTTP JSON POST URL:", httpposturl)
+
+	asrRequest := AsrRequest{
+    	      RecogniseBlob: encodedAudio,
+    	      Method:   "online2bin",
+	      Developer: true,
+	}
+	jsonData, err := json.Marshal(asrRequest)
+	check(err)
+	
+	//fmt.Println("jsonData:", jsonData)
+	//var f interface{}
+	//err = json.Unmarshal(jsonData, &f)
+	//fmt.Println("f:", f)
+
+	request, err := http.NewRequest("POST", httpposturl, bytes.NewBuffer(jsonData))
+	check(err)
+	
+	request.Header.Set("Content-Type", "application/json; charset=UTF-8")
+
+	client := &http.Client{}
+	response, err := client.Do(request)
+	check(err)
+
+	defer response.Body.Close()
+
+	//fmt.Println("response Status:", response.Status)
+	//fmt.Println("response Headers:", response.Header)
+	body, err := ioutil.ReadAll(response.Body)
+	check(err)
+
+	//fmt.Println("response Body:", string(body))
+	
+	asrResponse := AsrResponse{}
+	jsonErr := json.Unmarshal(body, &asrResponse)
+	check(jsonErr)
+	//fmt.Println(asrResponse.AudioFilePath)
+	fmt.Println(asrResponse.Transcriptions[0].Utterance)
+
+
+
+}
