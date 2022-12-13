@@ -654,13 +654,18 @@ func gCloudASR(conn *websocket.Conn, payload protocol.ASRRequest) {
 
 	//HB
 	//res, err := googleASR.Process(config, audioPath, chnk)
-	res, err := abairASR.Process(config, audioPath, chnk)
+
+	//if payload.Lang == "sv-SE" {
+	res, err := sttsASR.Process(config, audioPath, chnk)
+	//} else {
+	//	res, err := abairASR.Process(config, audioPath, chnk)
+	//}
 	//END HB
 	
 	if err != nil {
 	       	//HB
 	        //msg := fmt.Sprintf("googleASR.Process error: %v", err)
-		msg := fmt.Sprintf("abairASR.Process error: %v", err)
+		msg := fmt.Sprintf("ASR Process error: %v", err)
 		//END HB
 		log.Error(msg)
 		message := Message{
@@ -1118,6 +1123,7 @@ type Config struct {
 //HB
 var googleASR modules.GoogleASR
 var abairASR modules.AbairASR
+var sttsASR modules.SttsASR
 //END HB
 var aiExtractor ffprobe.InfoExtractor
 var validator validation.Validator
@@ -1273,6 +1279,10 @@ func main() {
 	abairASR, err = modules.NewAbairASR()
 	if err != nil {
 		log.Warning("Failed to initialise Abair ASR: %v", err)
+	}
+	sttsASR, err = modules.NewSttsASR()
+	if err != nil {
+		log.Warning("Failed to initialise Stts ASR: %v", err)
 	}
 
 
