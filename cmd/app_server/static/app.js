@@ -348,6 +348,18 @@ const onUserAddedRegion = function(wfRegion) {
 const onSelectedRegionChange = function (uuid) {
 
     console.log("START onSelectedRegionChange "+uuid)
+
+    //HB 230111 Save onSelectedRegionChange so that clicking in the waveform cases Save in the same way as clicking "select next chunk" or ctrl+arrowdown does
+    //This now causes a few unnecessary saves - on displaying the first chunk after load, and on select next chunk.
+    //TODO remove unnecessary saves (but seems to take very little time)
+    console.log("Saving page from onSelectedRegionChange");
+    savePage({ status: "in progress" });
+    console.log("FINISHED Saving page from onSelectedRegionChange");
+
+
+
+
+
     
     document.getElementById("asr_info").innerText = "";
     document.getElementById("reverse_expansion").innerText = "";
