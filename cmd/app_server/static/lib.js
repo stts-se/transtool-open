@@ -1,5 +1,6 @@
 "use strict";
 
+
 let LIB = {};
 
 LIB.siblings = function (elem, includeSelf) {
@@ -14,8 +15,10 @@ LIB.siblings = function (elem, includeSelf) {
     let sibling = elem.parentNode.firstElementChild;
 
     do {
-        if (includeSelf || sibling !== elem)
+
+        if (includeSelf || sibling !== elem) {
             siblings.push(sibling);
+	} 
     } while (sibling = sibling.nextElementSibling);
 
     return siblings;

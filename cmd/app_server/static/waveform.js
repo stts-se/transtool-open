@@ -585,6 +585,7 @@ class Waveform {
 		e.classList.remove("selected");
 		//HB 0728
 		//e.style["background-color"] = this.defaultRegionBackground;
+		//e.style["background-color"] = 'blue';
 	    }
 	}
     }
@@ -595,9 +596,32 @@ class Waveform {
 	}
 	console.log("setSelectedRegion", region.uuid, playMode, blockOnSelectedRegionChange);
 	this.debug("setSelectedRegion", region.uuid, region, playMode);
+	console.log("selectedRegionIndex: " + this.getSelectedRegionIndex())
+
+
+	//HB 230125 Maybe move this to after unselect ??
 	region.element.classList.add("selected");
 	region.element.style["background-color"] = this.selectedRegionBackground;
-	this.unselect(LIB.siblings(region.element, false));
+
+	console.log("BEFORE unselect siblings: " + LIB.siblings(region.element, false))
+	console.log("Region classlist: " + region.element.classList);
+	console.log("selectedRegionIndex: " + this.getSelectedRegionIndex())
+
+	//HB 230115 Fix for wavesurfer v6
+	//With wavesurfer.js v6 there is a problem here
+	//something to do with Proxy, domElement https://github.com/katspaugh/wavesurfer.js/blob/master/UPGRADE.md
+	//this.unselect(LIB.siblings(region.element, false));
+	this.unselect(LIB.siblings(region.element.domElement, false));
+
+	//HB move to here ??
+	//region.element.classList.add("selected");
+	//region.element.style["background-color"] = this.selectedRegionBackground;
+	
+	console.log("AFTER unselect siblings")
+	console.log("Region classlist: " + region.element.classList);
+	console.log("selectedRegionIndex: " + this.getSelectedRegionIndex())
+	
+
 	if (playMode === true) {
 	    console.log("calling playRegion");
 	    this.playRegion(region);
@@ -608,8 +632,10 @@ class Waveform {
 	}
 	if (this.onSelectedRegionChange && !blockOnSelectedRegionChange) {
 	    console.log("calling app.onSelectedRegionChange");
+	    console.log("selectedRegionIndex: " + this.getSelectedRegionIndex())
 	    this.onSelectedRegionChange(region.uuid);
 	}
+	console.log("selectedRegionIndex: " + this.getSelectedRegionIndex())
 	console.log("END setSelectedRegion");
     }
 

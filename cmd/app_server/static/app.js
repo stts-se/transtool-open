@@ -14,7 +14,8 @@ let ws;
 // const transparentOrange = 'hsla(39, 100%, 50%, 0.3)';
 const transparentBlue = 'hsla(200, 50%, 70%, 0.6)';
 const transparentGreen = 'hsla(120, 100%, 75%, 0.5)';
-const transparentGrey = 'hsla(0, 0%, 75%, 0.5)';
+//HB 230125 const transparentGrey = 'hsla(0, 0%, 75%, 0.5)';
+const transparentGrey = 'hsla(0, 0%, 50%, 0.5)';
 const transparentOrange = 'hsla(39, 100%, 50%, 0.5)';
 
 let gloptions = {
@@ -348,6 +349,7 @@ const onUserAddedRegion = function(wfRegion) {
 const onSelectedRegionChange = function (uuid) {
 
     console.log("START onSelectedRegionChange "+uuid)
+    console.log("selectedRegionIndex: " + waveform.getSelectedRegionIndex())
 
     //HB 230111 Save onSelectedRegionChange so that clicking in the waveform cases Save in the same way as clicking "select next chunk" or ctrl+arrowdown does
     //This now causes a few unnecessary saves - on displaying the first chunk after load, and on select next chunk.
@@ -449,6 +451,7 @@ function updateStatusColors() {
             } else if (chunk.current_status) {
                 if (chunk.current_status.name === "unchecked") {
                     statusText = "unch";
+		    //HB 230125 This sets the color of unchecked regions
                     region.color = transparentGrey;
                     //region.element.classList.add("unchecked");
                 } else {
@@ -465,8 +468,8 @@ function updateStatusColors() {
                     }
                 }
             } else {
-                region.color = transparentGrey;
-                //region.element.classList.add("unchecked");
+                region.color = transparentGrey; 
+		//region.element.classList.add("unchecked");
             }
         } else {
             region.color = transparentGrey;
@@ -475,6 +478,9 @@ function updateStatusColors() {
         }
         region.element.style["background-color"] = region.color;
 
+	//console.log(region.element.style["background-color"]);
+
+	
         let children = region.element.childNodes;
         let text;
         for (let i = 0; i < children.length; i++) {
@@ -910,7 +916,7 @@ function updateStatusDisplay(statusLevel, uuid, status) {
 	    let uuid = wfChunks[i].uuid;
 	    if ( chunkCache[uuid] ) {
 		const c = chunkCache[uuid];
-		console.log("updateStatusDisplay: chunk", c);
+		//HB too much information.. console.log("updateStatusDisplay: chunk", c);
 		if ( c.current_status.name === "unchecked" ) {
 		    statusText += "<span style=\"color:lightgray\">u</span>"
 		} else if ( c.current_status.name === "skip" ) {
