@@ -100,6 +100,13 @@ img.disabled {
 
 /* https://www.w3schools.com/htmL/html_colors_hsl.asp#:~:text=%20HTML%20HSL%20and%20HSLA%20Colors%20%201,Alpha%20channel%20-%20which%20specifies%20the...%20More */
 
+/* HB 230125 TODO Would like to set colours here - but if doesn't work, because set in js */
+/*
+.wavesurfer-region {
+    background-color: red;
+}
+*/
+
 region.selected {
     background-color: hsla(200, 50%, 70%, 0.4) !important;
     filter: brightness(100%) !important;
