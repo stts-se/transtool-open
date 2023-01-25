@@ -125,6 +125,7 @@ func (aASR SttsASR) Process(config protocol.ASRConfig, audioPath string, chunk p
 
 
 	httpposturl := "http://localhost:8887/recognise"
+	//httpposturl := "http://192.168.0.100:8887/recognise"
 	//fmt.Println("HTTP JSON POST URL:", httpposturl)
 
 	asrRequest := SttsAsrRequest{
