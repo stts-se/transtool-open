@@ -594,6 +594,9 @@ func validateAnnotation(anno protocol.AnnotationPayload) error {
 				return fmt.Errorf("overlapping chunks is not allowed, found %v before %v", prevChunk, chunk)
 			}
 		}
+		if chunk.CurrentStatus.Name == "" {
+			return fmt.Errorf("invalid current status for chunk: %#v", chunk)
+		}
 		if len(chunk.StatusHistory) > 0 && chunk.CurrentStatus.Name == "" {
 			return fmt.Errorf("status history exists, but no current status: %#v", chunk)
 		}
@@ -984,6 +987,9 @@ func status(a protocol.AnnotationPayload) string {
 	cStatus := map[string]int{}
 	for _, c := range a.Chunks {
 		s := c.CurrentStatus.Name
+		// if s == "" {
+		// 	s = "unchecked"
+		// }
 		s = strings.TrimSpace(s)
 		cStatus[s]++
 	}
