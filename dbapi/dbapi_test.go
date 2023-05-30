@@ -38,44 +38,44 @@ func TestSearch(t *testing.T) {
 	}
 
 	res1 := db.Search(Query{})
-	if w, g := 0, len(res1.Matches); g != w {
+	if w, g := 0, len(res1.MatchingPages); g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
 
 	res2 := db.Search(Query{Status: []string{"ok"}})
-	if w, g := 1, len(res2.Matches); g != w {
+	if w, g := 1, len(res2.MatchingPages); g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
 	//res2 := db.Search(Query{Status: []string{"ok"}})
-	if w, g := 1, len(res2.Matches[0].MatchingChunks); g != w {
+	if w, g := 1, len(res2.MatchingPages[0].MatchingChunks); g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
 
 	res3 := db.Search(Query{Status: []string{"ok", "skip"}})
-	if w, g := 1, len(res3.Matches); g != w {
+	if w, g := 1, len(res3.MatchingPages); g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
-	if w, g := 2, len(res3.Matches[0].MatchingChunks); g != w {
+	if w, g := 2, len(res3.MatchingPages[0].MatchingChunks); g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
 
 	res4 := db.Search(Query{Status: []string{"ok", "skip", "unchecked"}})
-	if w, g := 3, len(res4.Matches[0].MatchingChunks); g != w {
+	if w, g := 3, len(res4.MatchingPages[0].MatchingChunks); g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
 
 	res5 := db.Search(Query{TransRE: regexp.MustCompile("XYXXZZYZZWWQQ")})
-	if w, g := 0, len(res5.Matches); g != w {
+	if w, g := 0, len(res5.MatchingPages); g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
 
 	res6 := db.Search(Query{TransRE: regexp.MustCompile("4")})
-	if w, g := 1, len(res6.Matches); g != w {
+	if w, g := 1, len(res6.MatchingPages); g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
 
 	// Index 0 (first chunk)
-	if w, g := 0, res6.Matches[0].MatchingChunks[0]; g != w {
+	if w, g := 0, res6.MatchingPages[0].MatchingChunks[0]; g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
 
@@ -84,28 +84,28 @@ func TestSearch(t *testing.T) {
 
 	//fmt.Printf("RES: %#v\n\n", res7)
 
-	//inx := res7.Matches[0].MatchingChunks
+	//inx := res7.MatchingPages[0].MatchingChunks
 	//fmt.Printf("MatchIndex: %#v\n\n", inx)
 
-	if w, g := 2, len(res7.Matches); g != w {
+	if w, g := 2, len(res7.MatchingPages); g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
-	if w, g := 1, len(res7.Matches[0].MatchingChunks); g != w {
+	if w, g := 1, len(res7.MatchingPages[0].MatchingChunks); g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
 
 	// Check index for chunk
-	if w, g := 1, len(res7.Matches[0].MatchingChunks); g != w {
+	if w, g := 1, len(res7.MatchingPages[0].MatchingChunks); g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
 
-	if w, g := 1, len(res7.Matches[1].MatchingChunks); g != w {
+	if w, g := 1, len(res7.MatchingPages[1].MatchingChunks); g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
 
 	res8 := db.Search(Query{TransRE: regexp.MustCompile("[2]")})
 	// Check index for chunk
-	if w, g := 1, len(res8.Matches[0].MatchingChunks); g != w {
+	if w, g := 1, len(res8.MatchingPages[0].MatchingChunks); g != w {
 		t.Errorf("wanted %d got %d", w, g)
 	}
 

@@ -13,6 +13,9 @@ import (
 	"strings"
 	"sync"
 
+	// "golang.org/x/exp/maps"
+	// "golang.org/x/exp/slices"
+
 	"github.com/stts-se/transtool/log"
 	"github.com/stts-se/transtool/protocol"
 	"github.com/stts-se/transtool/validation"
@@ -1082,6 +1085,8 @@ const (
 
 func queryMatch(request protocol.QueryRequest, annotation protocol.AnnotationPayload, validator *validation.Validator) (bool, error) {
 
+	//matchingChunks := map[int]bool{}
+
 	var pageStatusMatch = false
 	if request.PageStatus == StatusAny || annotation.CurrentStatus.Name == "" || request.PageStatus == annotation.CurrentStatus.Name {
 		pageStatusMatch = true
@@ -1164,6 +1169,10 @@ func queryMatch(request protocol.QueryRequest, annotation protocol.AnnotationPay
 
 	//fmt.Printf("pageStatusMatch:%t statusMatch:%t sourceMatch:%t audioFileMatch:%t transMatch:%t validationMatch:%t\n", pageStatusMatch, statusMatch, sourceMatch, audioFileMatch, transMatch, validationMatch)
 
+	// res := maps.Keys(matchingChunks)
+	// slices.Sort(res)
+	// return res, nil
+
 	return pageStatusMatch && statusMatch && sourceMatch && audioFileMatch && transMatch && validationMatch, nil
 }
 
@@ -1187,13 +1196,13 @@ func (api *DBAPI) annotationFromPage(page protocol.PagePayload) protocol.Annotat
 
 // GetNextPage returns an annotation based on the query request. If an error is found, it returns an empty annotation, and an error. If an error is not found, but there is no page to be found, a message will be returned.
 func (api *DBAPI) GetNextPage(query protocol.QueryPayload, currentlyLockedID string, clientID ClientID, lockOnLoad bool) (protocol.AnnotationPayload, string, error) {
-	log.Info("[dbapi] GetNextPage")
+	log.Info("[dbapi] GetNextPage query %#v", query)
 	api.dbMutex.RLock()
 	defer api.dbMutex.RUnlock()
 
-	if debug {
-		log.Debug("[dbapi] GetNextPage query: %#v", query)
-	}
+	// if debug {
+	// 	log.Debug("[dbapi] GetNextPage query: %#v", query)
+	// }
 
 	if strings.TrimSpace(clientID.ID) == "" {
 		return protocol.AnnotationPayload{}, "", fmt.Errorf("empty ClientID.ID field: %#v", query)
@@ -1358,17 +1367,8 @@ type Query struct {
 	TransRE *regexp.Regexp
 }
 
-type MatchingPage struct {
-	MatchingChunks []int
-	Page           protocol.AnnotationPayload
-}
-
-type QueryResult struct {
-	Matches []MatchingPage
-}
-
-func (api *DBAPI) Search(q Query) QueryResult { //[]protocol.AnnotationPayload {
-	res := QueryResult{} //[]protocol.AnnotationPayload
+func (api *DBAPI) Search(q Query) protocol.QueryResult { //[]protocol.AnnotationPayload {
+	res := protocol.QueryResult{} //[]protocol.AnnotationPayload
 
 	// status := map[string]bool{}
 	// for _, s := range q.Status {
@@ -1388,13 +1388,14 @@ func (api *DBAPI) Search(q Query) QueryResult { //[]protocol.AnnotationPayload {
 			// TODO set any other useful field of AnnotationPayload
 			//page := protocol.AnnotationPayload{Chunks: matchingChunks}
 
-			m := MatchingPage{Page: a,
+			m := protocol.MatchingPage{
+				Page:           a,
 				MatchingChunks: matchingChunks,
 			}
-			res.Matches = append(res.Matches, m)
+			res.MatchingPages = append(res.MatchingPages, m)
 		}
 	}
-
+	log.Info("[dbapi] Search returns %#v", res) // never printed?
 	return res
 }
 

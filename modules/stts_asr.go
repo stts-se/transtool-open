@@ -1,13 +1,13 @@
 package modules
 
 import (
-        "os"
-	"encoding/json"
 	"bytes"
+	b64 "encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-    	b64 "encoding/base64"
+	"os"
 	"strings"
 
 	"context"
@@ -16,14 +16,13 @@ import (
 	"github.com/stts-se/transtool/log"
 	"github.com/stts-se/transtool/modules/ffmpeg"
 	"github.com/stts-se/transtool/protocol"
+)
 
-    )
-
-const debugy = true
+const debugy = false
 
 // SttsASR is used to call Stts Speech API for recognition. For initialization, use NewSttsASR().
 type SttsASR struct {
-	ctx     context.Context
+	ctx context.Context
 	//client  *speech.Client
 	chunkex ffmpeg.ChunkExtractor
 }
@@ -43,31 +42,27 @@ func NewSttsASR() (SttsASR, error) {
 	return res, nil
 }
 
-
-func checky(e error) {
-    if e != nil {
-        panic(e)
-    }
-}
-
+// func checky(e error) {
+// 	if e != nil {
+// 		panic(e)
+// 	}
+// }
 
 type SttsAsrRequest struct {
-    RecogniseBlob string `json:"recogniseBlob"`
+	RecogniseBlob string `json:"recogniseBlob"`
 }
 
 type SttsAsrResponse struct {
-	AudioFilePath string `json:"audioFilePath"`
+	AudioFilePath  string              `json:"audioFilePath"`
 	Transcriptions []SttsTranscription `json:"transcriptions"`
-	Duration float64 `json:"duration"`
+	Duration       float64             `json:"duration"`
 }
 
 type SttsTranscription struct {
-     Utterance string `json:"utterance"`
+	Utterance string `json:"utterance"`
 }
 
-
-
-//func Process() {
+// func Process() {
 // Process runs Stts ASR on each part of the file as specified in the `chunks` input. If the chunk list is empty, the whole file will be processed.
 func (aASR SttsASR) Process(config protocol.ASRConfig, audioPath string, chunk protocol.Chunk) (protocol.ASROutput, error) {
 	var err error
@@ -117,54 +112,70 @@ func (aASR SttsASR) Process(config protocol.ASRConfig, audioPath string, chunk p
 		}
 	}
 
-
-	//HB 
-
+	//HB
 
 	encodedAudio := b64.StdEncoding.EncodeToString([]byte(data))
 
-
-	httpposturl := "http://localhost:8887/recognise"
+	httpposturl := config.URL // "http://localhost:8887/recognise"
+	//httpposturl := "http://192.168.0.107:8887/recognise"
 	//httpposturl := "http://192.168.0.100:8887/recognise"
 	//fmt.Println("HTTP JSON POST URL:", httpposturl)
 
 	asrRequest := SttsAsrRequest{
-    	      RecogniseBlob: encodedAudio,
+		RecogniseBlob: encodedAudio,
 	}
 	jsonData, err := json.Marshal(asrRequest)
-	checky(err)
-	
+	//checky(err)
+	if err != nil {
+		return res, fmt.Errorf("asr marshal failed: %v", err)
+	}
+
 	//fmt.Println("jsonData:", jsonData)
 	//var f interface{}
 	//err = json.Unmarshal(jsonData, &f)
 	//fmt.Println("f:", f)
 
 	request, err := http.NewRequest("POST", httpposturl, bytes.NewBuffer(jsonData))
-	checky(err)
-	
+	//checky(err)
+	if err != nil {
+		return res, fmt.Errorf("asr request creation failed: %v", err)
+	}
+
 	request.Header.Set("Content-Type", "application/json; charset=UTF-8")
 
 	client := &http.Client{}
 	response, err := client.Do(request)
-	checky(err)
+	//checky(err)
+	if err != nil {
+		return res, fmt.Errorf("asr POST request failed: %v", err)
+	}
 
 	defer response.Body.Close()
 
 	//fmt.Println("response Status:", response.Status)
 	//fmt.Println("response Headers:", response.Header)
 	body, err := ioutil.ReadAll(response.Body)
-	checky(err)
+	//checky(err)
+	if err != nil {
+		return res, fmt.Errorf("asr response failed: %v", err)
+	}
 
 	//fmt.Println("response Body:", string(body))
-	
+
 	asrResponse := SttsAsrResponse{}
 	jsonErr := json.Unmarshal(body, &asrResponse)
-	checky(jsonErr)
+	//checky(jsonErr)
+	if err != nil {
+		return res, fmt.Errorf("asr unmarshal failed: %v", jsonErr)
+	}
+
 	//fmt.Println(asrResponse.AudioFilePath)
 
 	var resText = strings.TrimSpace(asrResponse.Transcriptions[0].Utterance)
 
-	fmt.Println(resText)
+	if debugy {
+		fmt.Println(resText)
+	}
 
 	//return asrResponse
 
@@ -174,13 +185,11 @@ func (aASR SttsASR) Process(config protocol.ASRConfig, audioPath string, chunk p
 		Chunk: protocol.Chunk{
 			Start: 0,
 			End:   0,
-			},
-		}
+		},
+	}
 	chunks = append(chunks, reschunk)
 	res = protocol.ASROutput{Chunks: chunks}
 
 	return res, nil
-
-
 
 }

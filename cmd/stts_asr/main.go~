@@ -1333,9 +1333,6 @@ func main() {
 
 	r.HandleFunc("/has_asr", hasASR)
 
-	// r.HandleFunc("/reload/{subproj}", reloadProject)
-	// r.HandleFunc("/load/{subproj}", addProject)
-
 	r.HandleFunc("/abbrev/list_lists", listLists)
 	r.HandleFunc("/abbrev/list_lists_with_length", listListsWithLength)
 	r.HandleFunc("/abbrev/create_new_list/{list_name}", createNewList)

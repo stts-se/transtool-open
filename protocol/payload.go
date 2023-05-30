@@ -115,6 +115,15 @@ type QueryRequest struct {
 	//	transRECompiled *regexp.Regexp
 }
 
+type MatchingPage struct {
+	MatchingChunks []int             `json:"matching_chunks"`
+	Page           AnnotationPayload `json:"page"`
+}
+
+type QueryResult struct {
+	MatchingPages []MatchingPage `json:"matching_pages"`
+}
+
 type ListFiles struct {
 	SubProj string `json:"sub_proj"`
 }
@@ -130,6 +139,7 @@ type ASROutput struct {
 }
 
 type ASRConfig struct {
+	URL          string `json:"url"`
 	Lang         string `json:"lang"`
 	Encoding     string `json:"encoding"`
 	SampleRate   int    `json:"sample_rate"`
