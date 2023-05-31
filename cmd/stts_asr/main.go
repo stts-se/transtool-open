@@ -7,6 +7,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	//"sync"
 
 	"github.com/stts-se/transtool/dbapi"
 	"github.com/stts-se/transtool/log"
@@ -20,6 +21,19 @@ var proj *dbapi.Proj
 
 var sttsASR modules.SttsASR
 var aiExtractor ffprobe.InfoExtractor
+
+func runASR(asrConfig protocol.ASRConfig, audioPath string, ch protocol.TransChunk) string {
+	output, err := sttsASR.Process(asrConfig, audioPath, ch.Chunk)
+	if err != nil {
+		msg := fmt.Sprintf("aiExtractor.Process error: %v", err)
+		log.Fatal(msg)
+	}
+	trans := []string{}
+	for _, t := range output.Chunks {
+		trans = append(trans, t.Text)
+	}
+	return strings.Join(trans, " ")
+}
 
 func main() {
 
@@ -80,6 +94,8 @@ func main() {
 		log.Fatal("Couldn't load data: %v", err)
 	}
 
+	//var wg sync.WaitGroup
+
 	for _, pr := range proj.ListSubProjs() {
 		db := proj.GetDB(pr)
 		for _, anno := range db.GetAnnotationData() {
@@ -110,18 +126,18 @@ func main() {
 					log.Info("Skipping chunk with status: %#v", ch)
 					continue
 				}
-				output, err := sttsASR.Process(asrConfig, audioPath, ch.Chunk)
-				if err != nil {
-					msg := fmt.Sprintf("aiExtractor.Process error: %v", err)
-					log.Fatal(msg)
-				}
-				trans := []string{}
-				for _, t := range output.Chunks {
-					trans = append(trans, t.Text)
-				}
-				ch.Trans = strings.Join(trans, " ")
-				anno.Chunks[i] = ch
-				log.Info("completed: %v %v %v", anno.Page.ID, i, ch.Trans)
+				chunkIndex := i
+				annox := anno
+				//wg.Add(1)
+				//go func(annox *protocol.AnnotationPayload, chunkIndex int) {
+				//	defer wg.Done()
+				log.Info("sending chunk to asr: #%v/%v in %v", chunkIndex+1, len(annox.Chunks), annox.Page.ID)
+				trans := runASR(asrConfig, audioPath, ch)
+				ch.Trans = trans
+				annox.Chunks[chunkIndex] = ch
+				log.Info("completed: %v %v %v", annox.Page.ID, chunkIndex, ch.Trans)
+				//}(&anno, i)
+
 			}
 			err = db.Save(anno)
 			if err != nil {
@@ -130,5 +146,6 @@ func main() {
 			}
 		}
 	}
+	//wg.Wait()
 
 }
