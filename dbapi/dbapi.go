@@ -14,7 +14,7 @@ import (
 	"sync"
 
 	// "golang.org/x/exp/maps"
-	// "golang.org/x/exp/slices"
+	"golang.org/x/exp/slices"
 
 	"github.com/stts-se/transtool/log"
 	"github.com/stts-se/transtool/protocol"
@@ -57,35 +57,49 @@ func NewProj(dirList string, validator *validation.Validator) (Proj, error) {
 		// (in Proj.DBs:   map[string]*DBAPI{})
 		p = strings.TrimSuffix(p, "/")
 
-		_, err := os.Stat(p)
-		if os.IsNotExist(err) {
-			return res, fmt.Errorf("non-existing directory : %v", err)
-
-		}
-
-		sources := path.Join(p, "source")
-		_, err = os.Stat(sources)
-		if os.IsNotExist(err) {
-			return res, fmt.Errorf("non-existing sources directory : %v", err)
-		}
-
-		annotation := path.Join(p, "annotation")
-		_, err = os.Stat(annotation)
-		if os.IsNotExist(err) {
-			return res, fmt.Errorf("non-existing annotation directory : %v", err)
-		}
-
-		db := NewDBAPI(p, validator)
 		if _, ok := res.DBs[p]; ok {
 			fmt.Fprintf(os.Stderr, "directory already loaded, skipping: '%s'\n", p)
 			continue
-			//return res, fmt.Errorf("directory already loaded: '%s'", p)
 		}
-		res.DBs[p] = db
+		err := res.AddProj(p, validator)
+		if err != nil {
+			return res, err
+		}
+	}
+	return res, nil
+}
 
+func (p *Proj) AddProj(dir string, validator *validation.Validator) error {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+	//fmt.Println("AddProj", dir)
+	dir = strings.TrimSpace(dir)
+	dir = strings.TrimSuffix(dir, "/")
+
+	if _, ok := p.DBs[dir]; ok {
+		return fmt.Errorf("directory already loaded: %s", dir)
 	}
 
-	return res, nil
+	_, err := os.Stat(dir)
+	if os.IsNotExist(err) {
+		return fmt.Errorf("non-existing directory : %v", err)
+	}
+
+	sources := path.Join(dir, "source")
+	_, err = os.Stat(sources)
+	if os.IsNotExist(err) {
+		return fmt.Errorf("non-existing sources directory : %v", err)
+	}
+
+	annotation := path.Join(dir, "annotation")
+	_, err = os.Stat(annotation)
+	if os.IsNotExist(err) {
+		return fmt.Errorf("non-existing annotation directory : %v", err)
+	}
+
+	db := NewDBAPI(dir, validator)
+	p.DBs[dir] = db
+	return nil
 }
 
 // GetStatusSources returns a list of the "status sources" (typically editor user names) known in the project
@@ -188,14 +202,40 @@ type ValRes struct {
 }
 
 // LoadData wraps dbapi.DBAPI.LoadData
-func (p *Proj) LoadData() ([]ValRes, error) {
+// if no subProjects are provided, all sub projects are loaded
+func (p *Proj) LoadData(subProjects ...string) ([]ValRes, error) {
 	var res []ValRes
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 
 	for sp, db := range p.DBs {
+		if len(subProjects) > 0 && !slices.Contains(subProjects, db.ProjectDir) {
+			continue
+		}
+
+		if len(db.lockMap) > 0 {
+			userSinPlu := "users"
+			users := []string{}
+			for _, client := range db.lockMap {
+				if !slices.Contains(users, client.UserName) {
+					users = append(users, client.UserName)
+				}
+			}
+			if len(users) == 1 {
+				userSinPlu = "user"
+			}
+			return res, fmt.Errorf("cannot reload sub project entities locked by %s: %v", userSinPlu, strings.Join(users, ", "))
+		}
+
+		// clear db first if we are reloading
+		err := db.Clear()
+		if err != nil {
+			return res, fmt.Errorf("clear failed for sub project %s : %v", sp, err)
+		}
+
 		vRes, err := db.LoadData()
 		res = append(res, vRes...)
+
 		if err != nil {
 
 			msg := fmt.Sprintf("failed to load subproj '%s' : %v", sp, err)
@@ -357,6 +397,24 @@ func NewDBAPI(projectDir string, validator *validation.Validator) *DBAPI {
 
 func (api *DBAPI) ProjectName() string {
 	return path.Base(api.ProjectDir)
+}
+
+func (api *DBAPI) Clear() error {
+	api.lockMapMutex.Lock()
+	defer func() {
+		api.lockMapMutex.Unlock()
+		api.dbMutex.Unlock()
+	}()
+
+	for k := range api.lockMap {
+		delete(api.lockMap, k)
+	}
+	api.dbMutex.Lock()
+	for k := range api.annotationData {
+		delete(api.annotationData, k)
+	}
+	api.sourceData = nil
+	return nil
 }
 
 func (api *DBAPI) PageFromID(id string) (protocol.PagePayload, error) {
@@ -959,7 +1017,7 @@ func (api *DBAPI) StatsII() SubProjStats {
 		plb := fmt.Sprintf("%s: %d", k, v)
 		res.PagesLockedBy = append(res.PagesLockedBy, plb)
 	}
-
+	//fmt.Printf("StatsII debug %s : %v/%v\n", api.ProjectName(), res.PagesDone, res.PagesTot)
 	return res
 }
 

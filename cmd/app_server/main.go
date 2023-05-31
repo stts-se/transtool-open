@@ -1055,6 +1055,60 @@ func hasASR(w http.ResponseWriter, r *http.Request) {
 	//END HB
 }
 
+func reloadProject(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	subProj := params["subproj"]
+	fmt.Fprintf(w, "Requesting reload of sub project %v\n", subProj)
+	_, err := proj.LoadData(subProj)
+	if err != nil {
+		msg := fmt.Sprintf("Reload failed: %v", err)
+		log.Error("reloadProject: " + msg)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	fmt.Fprintf(w, "Reloaded sub project %v\n", subProj)
+
+	dirNames := strings.Join(proj.ListSubProjs(), ":")
+	wsPayloadAllClients("project_name", dirNames)
+	wsPayloadAllClients("stats", proj.Stats())
+}
+
+func addProject(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	subProj0 := params["subproj"]
+	fmt.Fprintf(w, "Requesting load of new sub project %v\n", subProj0)
+
+	projs := proj.ListSubProjs()
+	if len(projs) == 0 {
+		msg := "Couldn't derive project folder"
+		log.Error("addProject: " + msg)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	dir := path.Dir(projs[0])
+	subProj := path.Join(dir, subProj0)
+	err := proj.AddProj(subProj, &validator)
+	if err != nil {
+		msg := fmt.Sprintf("Add failed: %v", err)
+		log.Error("addProject: " + msg)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+
+	_, err = proj.LoadData(subProj)
+	if err != nil {
+		msg := fmt.Sprintf("Load failed: %v", err)
+		log.Error("addProject: " + msg)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	fmt.Fprintf(w, "Loaded new sub project %v\n", subProj0)
+
+	dirNames := strings.Join(proj.ListSubProjs(), ":")
+	wsPayloadAllClients("project_name", dirNames)
+	wsPayloadAllClients("stats", proj.Stats())
+}
+
 func reloadValidationConfig(w http.ResponseWriter, r *http.Request) {
 
 	remote := r.RemoteAddr
@@ -1306,6 +1360,9 @@ func main() {
 		r.HandleFunc("/audio/{file}", serveAudio).Methods("GET")
 	}
 
+	r.HandleFunc("/reload/{subproj}", reloadProject)
+	r.HandleFunc("/load/{subproj}", addProject)
+
 	docs := make(map[string]string)
 	err = r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
 		t, err := route.GetPathTemplate()
@@ -1332,9 +1389,6 @@ func main() {
 	}
 
 	r.HandleFunc("/has_asr", hasASR)
-
-	// r.HandleFunc("/reload/{subproj}", reloadProject)
-	// r.HandleFunc("/load/{subproj}", addProject)
 
 	r.HandleFunc("/abbrev/list_lists", listLists)
 	r.HandleFunc("/abbrev/list_lists_with_length", listListsWithLength)
