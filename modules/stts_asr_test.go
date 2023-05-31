@@ -11,7 +11,6 @@ import (
 	"github.com/stts-se/transtool/protocol"
 )
 
-
 func init() {
 }
 
@@ -22,6 +21,7 @@ func TestSttsASR_UnchunkedWav(t *testing.T) {
 		Encoding:     "wav",
 		SampleRate:   44100,
 		ChannelCount: 1,
+		URL:          "http://localhost:8887/recognise",
 	}
 	sttsasr, err := NewSttsASR()
 	if err != nil {
@@ -36,7 +36,7 @@ func TestSttsASR_UnchunkedWav(t *testing.T) {
 	}
 	exp := []protocol.ASROutputChunk{
 		{Text: "en mening en annan mening och en tredje sista mening", Chunk: protocol.Chunk{Start: 0, End: 0}},
-		}
+	}
 
 	got := got0.Chunks
 	if len(got) != len(exp) {
@@ -52,14 +52,13 @@ func TestSttsASR_UnchunkedWav(t *testing.T) {
 	}
 }
 
-
-
 func TestSttsASR_ChunkWav(t *testing.T) {
 	config := protocol.ASRConfig{
 		Lang:         "sv-SE",
 		Encoding:     "wav",
 		SampleRate:   44100,
 		ChannelCount: 1,
+		URL:          "http://localhost:8887/recognise",
 	}
 
 	sttsasr, err := NewSttsASR()
@@ -90,4 +89,3 @@ func TestSttsASR_ChunkWav(t *testing.T) {
 
 	}
 }
-
