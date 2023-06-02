@@ -1061,7 +1061,7 @@ func reloadProject(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Requesting reload of sub project %v\n", subProj)
 	_, err := proj.LoadData(subProj)
 	if err != nil {
-		msg := fmt.Sprintf("Reload failed: %v", err)
+		msg := fmt.Sprintf("error: Reload failed: %v", err)
 		log.Error("reloadProject: " + msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
@@ -1078,18 +1078,17 @@ func addProject(w http.ResponseWriter, r *http.Request) {
 	subProj0 := params["subproj"]
 	fmt.Fprintf(w, "Requesting load of new sub project %v\n", subProj0)
 
-	projs := proj.ListSubProjs()
-	if len(projs) == 0 {
-		msg := "Couldn't derive project folder"
+	if *cfg.ProjectRoot == "" {
+		msg := "error: Project root is not defined"
 		log.Error("addProject: " + msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	dir := path.Dir(projs[0])
-	subProj := path.Join(dir, subProj0)
+
+	subProj := path.Join(*cfg.ProjectRoot, subProj0)
 	err := proj.AddProj(subProj, &validator)
 	if err != nil {
-		msg := fmt.Sprintf("Add failed: %v", err)
+		msg := fmt.Sprintf("error: Add failed: %v", err)
 		log.Error("addProject: " + msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
@@ -1097,7 +1096,7 @@ func addProject(w http.ResponseWriter, r *http.Request) {
 
 	_, err = proj.LoadData(subProj)
 	if err != nil {
-		msg := fmt.Sprintf("Load failed: %v", err)
+		msg := fmt.Sprintf("error: Load failed: %v", err)
 		log.Error("addProject: " + msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
@@ -1164,6 +1163,7 @@ type Config struct {
 	StaticDir            *string `json:"static_dir"`
 	BlockAudio           *bool   `json:"block_audio"`
 	ProjectDirs          *string `json:"project_dir"`
+	ProjectRoot          *string `json:"project_root"`
 	Debug                *bool   `json:"debug"`
 	Ffmpeg               *string `json:"ffmpeg"`
 	GCloudCredentials    *string `json:"gcloud_credentials"`
@@ -1198,6 +1198,7 @@ func main() {
 	cfg.BlockAudio = flag.Bool("block_audio", false, "Block audio dir from being served")
 	//cfg.ProjectDir = flag.String("project", "", "Project `directory`")
 	cfg.ProjectDirs = flag.String("project_dirs", "", "Project directories separated by ':' (path1/dir1:path1/dir2 [...])")
+	cfg.ProjectRoot = flag.String("project_root", "", "Project root for dynamic project creation")
 	cfg.Ffmpeg = flag.String("ffmpeg", "ffmpeg", "Ffmpeg command/`path`")
 	cfg.GCloudCredentials = flag.String("gcloud_credentials", "", "Google Cloud ASR credentials file path")
 	//NL 20210715 cfg.AbbrevDir = flag.String("abbrev_dir", "{projectdir}/../abbreviation_files", "Abbreviation files `directory`")
@@ -1360,8 +1361,8 @@ func main() {
 		r.HandleFunc("/audio/{file}", serveAudio).Methods("GET")
 	}
 
-	r.HandleFunc("/reload/{subproj}", reloadProject)
-	r.HandleFunc("/load/{subproj}", addProject)
+	r.HandleFunc("/admin/reload/{subproj}", reloadProject)
+	r.HandleFunc("/admin/load/{subproj}", addProject)
 
 	docs := make(map[string]string)
 	err = r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
