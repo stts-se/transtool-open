@@ -1058,6 +1058,7 @@ func hasASR(w http.ResponseWriter, r *http.Request) {
 func reloadProject(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	subProj := params["subproj"]
+	log.Info("Requesting reload of sub project %v", subProj)
 	fmt.Fprintf(w, "Requesting reload of sub project %v\n", subProj)
 	_, err := proj.LoadData(subProj)
 	if err != nil {
@@ -1071,6 +1072,26 @@ func reloadProject(w http.ResponseWriter, r *http.Request) {
 	dirNames := strings.Join(proj.ListSubProjs(), ":")
 	wsPayloadAllClients("project_name", dirNames)
 	wsPayloadAllClients("stats", proj.Stats())
+}
+
+type PayloadSlice struct {
+	Value []string `json:"value"`
+}
+
+func listProjects(w http.ResponseWriter, r *http.Request) {
+	log.Info("Requesting project listing")
+	projNames := []string{}
+	for _, p := range proj.ListSubProjs() {
+		projNames = append(projNames, filepath.Base(p))
+	}
+	payload := PayloadSlice{Value: projNames}
+	resJSON, err := json.Marshal(payload)
+	if err != nil {
+		msg := fmt.Sprintf("Failed to marshal result : %v", err)
+		log.Error(msg)
+		return
+	}
+	fmt.Fprintf(w, "%s", string(resJSON))
 }
 
 func addProject(w http.ResponseWriter, r *http.Request) {
@@ -1363,6 +1384,7 @@ func main() {
 
 	r.HandleFunc("/admin/reload/{subproj}", reloadProject)
 	r.HandleFunc("/admin/load/{subproj}", addProject)
+	r.HandleFunc("/admin/list_projects", listProjects)
 
 	docs := make(map[string]string)
 	err = r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
