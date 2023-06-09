@@ -1076,13 +1076,25 @@ func addProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = proj.LoadData(subProj)
+	valRes, err := proj.LoadData(subProj)
 	if err != nil {
 		msg := fmt.Sprintf("error: Load failed: %v", err)
 		log.Error("addProject: " + msg)
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
+	levelFreq := map[string]int{}
+	for _, vr := range valRes {
+		log.Warning("%s\t%s", vr.Level, vr.Message)
+		levelFreq[vr.Level]++
+	}
+	if len(levelFreq) > 0 {
+		log.Warning("\n\n===== NUMBER OF ISSUES ======\n")
+	}
+	for k, v := range levelFreq {
+		log.Warning("%s\t%d", k, v)
+	}
+
 	fmt.Fprintf(w, "Loaded new sub project %v\n", subProj0)
 
 	dirNames := strings.Join(proj.ListSubProjs(), ":")
