@@ -1093,7 +1093,7 @@ func addProject(w http.ResponseWriter, r *http.Request) {
 func reloadProject(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	subProj0 := params["subproj"]
-	log.Info("Requesting reload of sub project %v", subProj0)
+	log.Info("[main] Requesting reload of sub project %v", subProj0)
 	//fmt.Fprintf(w, "Requesting reload of sub project %v\n", subProj0)
 	subProj := path.Join(*cfg.ProjectRoot, subProj0)
 	_, err := proj.LoadData(subProj)
@@ -1113,7 +1113,7 @@ func reloadProject(w http.ResponseWriter, r *http.Request) {
 func unloadProject(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	subProj0 := params["subproj"]
-	log.Info("Requesting unload of sub project %v", subProj0)
+	log.Info("[main] Requesting unload of sub project %v", subProj0)
 	//fmt.Fprintf(w, "Requesting unload of sub project %v\n", subProj0)
 	subProj := path.Join(*cfg.ProjectRoot, subProj0)
 	err := proj.UnloadData(subProj)
@@ -1135,7 +1135,7 @@ type PayloadSlice struct {
 }
 
 func listProjects(w http.ResponseWriter, r *http.Request) {
-	log.Info("Requesting project listing")
+	log.Info("[main] Requesting project listing")
 	projNames := []string{}
 	for _, p := range proj.ListSubProjs() {
 		projNames = append(projNames, filepath.Base(p))
