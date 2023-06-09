@@ -209,9 +209,11 @@ func (p *Proj) LoadData(subProjects ...string) ([]ValRes, error) {
 	defer p.mutex.Unlock()
 
 	for sp, db := range p.DBs {
+		//fmt.Println("HEJ", subProjects, db.ProjectDir)
 		if len(subProjects) > 0 && !slices.Contains(subProjects, db.ProjectDir) {
 			continue
 		}
+		//fmt.Println("SVEJ", subProjects, db.ProjectDir)
 
 		if len(db.lockMap) > 0 {
 			userSinPlu := "users"
@@ -227,7 +229,7 @@ func (p *Proj) LoadData(subProjects ...string) ([]ValRes, error) {
 			return res, fmt.Errorf("cannot reload sub project entities locked by %s: %v", userSinPlu, strings.Join(users, ", "))
 		}
 
-		// clear db first if we are reloading
+		// clear db first in case we are reloading
 		err := db.Clear()
 		if err != nil {
 			return res, fmt.Errorf("clear failed for sub project %s : %v", sp, err)
@@ -262,6 +264,43 @@ func (p *Proj) LoadData(subProjects ...string) ([]ValRes, error) {
 
 	}
 	return res, nil
+}
+
+func (p *Proj) UnloadData(subProjects ...string) error {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	for sp, db := range p.DBs {
+		if len(subProjects) > 0 && !slices.Contains(subProjects, db.ProjectDir) {
+			continue
+		}
+
+		if len(db.lockMap) > 0 {
+			userSinPlu := "users"
+			users := []string{}
+			for _, client := range db.lockMap {
+				if !slices.Contains(users, client.UserName) {
+					users = append(users, client.UserName)
+				}
+			}
+			if len(users) == 1 {
+				userSinPlu = "user"
+			}
+			return fmt.Errorf("cannot unload sub project entities locked by %s: %v", userSinPlu, strings.Join(users, ", "))
+		}
+
+		// clear db first
+		err := db.Clear()
+		if err != nil {
+			return fmt.Errorf("clear failed for sub project %s : %v", sp, err)
+		}
+
+		delete(p.DBs, sp)
+
+		log.Info("[dbapi] Unloaded data for '%s'", sp)
+
+	}
+	return nil
 }
 
 func (p *Proj) ListAudioFiles(subProj string) ([]string, error) {

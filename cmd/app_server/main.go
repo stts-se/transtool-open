@@ -1055,49 +1055,10 @@ func hasASR(w http.ResponseWriter, r *http.Request) {
 	//END HB
 }
 
-func reloadProject(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	subProj := params["subproj"]
-	log.Info("Requesting reload of sub project %v", subProj)
-	fmt.Fprintf(w, "Requesting reload of sub project %v\n", subProj)
-	_, err := proj.LoadData(subProj)
-	if err != nil {
-		msg := fmt.Sprintf("error: Reload failed: %v", err)
-		log.Error("reloadProject: " + msg)
-		http.Error(w, msg, http.StatusBadRequest)
-		return
-	}
-	fmt.Fprintf(w, "Reloaded sub project %v\n", subProj)
-
-	dirNames := strings.Join(proj.ListSubProjs(), ":")
-	wsPayloadAllClients("project_name", dirNames)
-	wsPayloadAllClients("stats", proj.Stats())
-}
-
-type PayloadSlice struct {
-	Value []string `json:"value"`
-}
-
-func listProjects(w http.ResponseWriter, r *http.Request) {
-	log.Info("Requesting project listing")
-	projNames := []string{}
-	for _, p := range proj.ListSubProjs() {
-		projNames = append(projNames, filepath.Base(p))
-	}
-	payload := PayloadSlice{Value: projNames}
-	resJSON, err := json.Marshal(payload)
-	if err != nil {
-		msg := fmt.Sprintf("Failed to marshal result : %v", err)
-		log.Error(msg)
-		return
-	}
-	fmt.Fprintf(w, "%s", string(resJSON))
-}
-
 func addProject(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	subProj0 := params["subproj"]
-	fmt.Fprintf(w, "Requesting load of new sub project %v\n", subProj0)
+	//fmt.Fprintf(w, "Requesting load of new sub project %v\n", subProj0)
 
 	if *cfg.ProjectRoot == "" {
 		msg := "error: Project root is not defined"
@@ -1127,6 +1088,67 @@ func addProject(w http.ResponseWriter, r *http.Request) {
 	dirNames := strings.Join(proj.ListSubProjs(), ":")
 	wsPayloadAllClients("project_name", dirNames)
 	wsPayloadAllClients("stats", proj.Stats())
+}
+
+func reloadProject(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	subProj0 := params["subproj"]
+	log.Info("Requesting reload of sub project %v", subProj0)
+	//fmt.Fprintf(w, "Requesting reload of sub project %v\n", subProj0)
+	subProj := path.Join(*cfg.ProjectRoot, subProj0)
+	_, err := proj.LoadData(subProj)
+	if err != nil {
+		msg := fmt.Sprintf("error: Reload failed: %v", err)
+		log.Error("reloadProject: " + msg)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	fmt.Fprintf(w, "Reloaded sub project %v\n", subProj0)
+
+	dirNames := strings.Join(proj.ListSubProjs(), ":")
+	wsPayloadAllClients("project_name", dirNames)
+	wsPayloadAllClients("stats", proj.Stats())
+}
+
+func unloadProject(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	subProj0 := params["subproj"]
+	log.Info("Requesting unload of sub project %v", subProj0)
+	//fmt.Fprintf(w, "Requesting unload of sub project %v\n", subProj0)
+	subProj := path.Join(*cfg.ProjectRoot, subProj0)
+	err := proj.UnloadData(subProj)
+	if err != nil {
+		msg := fmt.Sprintf("error: Unload failed: %v", err)
+		log.Error("unloadProject: " + msg)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	fmt.Fprintf(w, "Unloaded sub project %v\n", subProj0)
+
+	dirNames := strings.Join(proj.ListSubProjs(), ":")
+	wsPayloadAllClients("project_name", dirNames)
+	wsPayloadAllClients("stats", proj.Stats())
+}
+
+type PayloadSlice struct {
+	Value []string `json:"value"`
+}
+
+func listProjects(w http.ResponseWriter, r *http.Request) {
+	log.Info("Requesting project listing")
+	projNames := []string{}
+	for _, p := range proj.ListSubProjs() {
+		projNames = append(projNames, filepath.Base(p))
+	}
+	payload := PayloadSlice{Value: projNames}
+	resJSON, err := json.Marshal(payload)
+	if err != nil {
+		msg := fmt.Sprintf("Failed to marshal result : %v", err)
+		log.Error(msg)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	fmt.Fprintf(w, "%s", string(resJSON))
 }
 
 func reloadValidationConfig(w http.ResponseWriter, r *http.Request) {
@@ -1382,6 +1404,7 @@ func main() {
 		r.HandleFunc("/audio/{file}", serveAudio).Methods("GET")
 	}
 
+	r.HandleFunc("/admin/unload/{subproj}", unloadProject)
 	r.HandleFunc("/admin/reload/{subproj}", reloadProject)
 	r.HandleFunc("/admin/load/{subproj}", addProject)
 	r.HandleFunc("/admin/list_projects", listProjects)
