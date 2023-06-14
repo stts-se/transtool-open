@@ -655,12 +655,22 @@ func gCloudASR(conn *websocket.Conn, payload protocol.ASRRequest) {
 
 	//HB
 	//res, err := googleASR.Process(config, audioPath, chnk)
+	//res, err := sttsASR.Process(config, audioPath, chnk)
 
-	//if payload.Lang == "sv-SE" {
-	res, err := sttsASR.Process(config, audioPath, chnk)
-	//} else {
-	//	res, err := abairASR.Process(config, audioPath, chnk)
-	//}
+	//var err []string
+	var res protocol.ASROutput
+	
+	if payload.Lang == "sv-SE" {
+		res, err = sttsASR.Process(config, audioPath, chnk)
+	} else if payload.Lang == "ga-IE" {
+		res, err = abairASR.Process(config, audioPath, chnk)
+	} else {
+		if googleASR.Initialised() {
+			res, err = googleASR.Process(config, audioPath, chnk)
+		} else {
+			err = fmt.Errorf("googleASR not initialised")
+		}
+	}
 	//END HB
 
 	if err != nil {
