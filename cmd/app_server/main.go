@@ -659,7 +659,7 @@ func gCloudASR(conn *websocket.Conn, payload protocol.ASRRequest) {
 
 	//var err []string
 	var res protocol.ASROutput
-	
+
 	if payload.Lang == "sv-SE" {
 		res, err = sttsASR.Process(config, audioPath, chnk)
 	} else if payload.Lang == "ga-IE" {
@@ -1235,6 +1235,9 @@ type Config struct {
 	AbbrevDir            *string `json:"abbrev_dir"`
 	ValidationConfigFile *string `json:"validation_config_file"`
 
+	// AdminMode enables "unsafe" RestAPI calls reload/unload/load/list
+	AdminMode *bool `json:"admin"`
+
 	//HB added 4/10 2021
 	NoDelete       *bool `json:"no_delete"`
 	EnableAutoplay *bool `json:"enable_autoplay"`
@@ -1268,6 +1271,7 @@ func main() {
 	cfg.GCloudCredentials = flag.String("gcloud_credentials", "", "Google Cloud ASR credentials file path")
 	//NL 20210715 cfg.AbbrevDir = flag.String("abbrev_dir", "{projectdir}/../abbreviation_files", "Abbreviation files `directory`")
 	cfg.AbbrevDir = flag.String("abbrev_dir", "", "Abbreviation files `directory`")
+	cfg.AdminMode = flag.Bool("admin", false, "Admin mode (enables admin Rest API)")
 	cfg.Debug = flag.Bool("debug", false, "Debug mode")
 	protocol := "http"
 	cfg.Protocol = &protocol
@@ -1426,10 +1430,12 @@ func main() {
 		r.HandleFunc("/audio/{file}", serveAudio).Methods("GET")
 	}
 
-	r.HandleFunc("/admin/unload/{subproj}", unloadProject)
-	r.HandleFunc("/admin/reload/{subproj}", reloadProject)
-	r.HandleFunc("/admin/load/{subproj}", addProject)
-	r.HandleFunc("/admin/list_projects", listProjects)
+	if *cfg.AdminMode {
+		r.HandleFunc("/admin/unload/{subproj}", unloadProject)
+		r.HandleFunc("/admin/reload/{subproj}", reloadProject)
+		r.HandleFunc("/admin/load/{subproj}", addProject)
+		r.HandleFunc("/admin/list_projects", listProjects)
+	}
 
 	docs := make(map[string]string)
 	err = r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
