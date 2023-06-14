@@ -99,7 +99,7 @@ func (gASR GoogleASR) Process(config protocol.ASRConfig, audioPath string, chunk
 	} else {
 		tmpData, err := gASR.chunkex.ProcessFile(audioPath, []protocol.Chunk{chunk}, "flac")
 		gConfig.Encoding = speechpb.RecognitionConfig_FLAC
-		gConfig.AudioChannelCount = 1 // todo: how do we know?
+		//gConfig.AudioChannelCount = 1 // todo: how do we know?
 		if err != nil {
 			return res, fmt.Errorf("failed to extract chunks : %v", err)
 		}
