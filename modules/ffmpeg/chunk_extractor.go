@@ -11,7 +11,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/stts-se/transtool/protocol"
+	"github.com/stts-se/transtool-open/protocol"
 )
 
 // ChunkExtractor extracts time chunks from an audio file, creating a subset of "phrases" from the file.

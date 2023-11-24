@@ -18,8 +18,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"github.com/stts-se/transtool/abbrevs"
-	"github.com/stts-se/transtool/log"
+	"github.com/stts-se/transtool-open/abbrevs"
+	"github.com/stts-se/transtool-open/log"
 )
 
 // === CONSTANTS

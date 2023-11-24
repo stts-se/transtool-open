@@ -5,7 +5,7 @@ import (
 	"path"
 	"testing"
 
-	"github.com/stts-se/transtool/protocol"
+	"github.com/stts-se/transtool-open/protocol"
 )
 
 func TestChunk2File1MP3(t *testing.T) {

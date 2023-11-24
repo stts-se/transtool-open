@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stts-se/transtool/protocol"
+	"github.com/stts-se/transtool-open/protocol"
 )
 
 // Chunker is used to split audio files on silence, creating a subset of "phrases" from the file.

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/stts-se/transtool/log"
+	"github.com/stts-se/transtool-open/log"
 )
 
 // NL 20210809 The code below is lifted from https://github.com/stts-se/tord3000

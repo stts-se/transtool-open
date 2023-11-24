@@ -11,9 +11,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/stts-se/transtool/dbapi"
-	"github.com/stts-se/transtool/protocol"
-	"github.com/stts-se/transtool/validation"
+	"github.com/stts-se/transtool-open/dbapi"
+	"github.com/stts-se/transtool-open/protocol"
+	"github.com/stts-se/transtool-open/validation"
 )
 
 // Manually OK:ed files with adjacent identical transcriptions

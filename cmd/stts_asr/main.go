@@ -9,12 +9,12 @@ import (
 	"strings"
 	//"sync"
 
-	"github.com/stts-se/transtool/dbapi"
-	"github.com/stts-se/transtool/log"
-	"github.com/stts-se/transtool/modules"
-	"github.com/stts-se/transtool/modules/ffprobe"
-	"github.com/stts-se/transtool/protocol"
-	"github.com/stts-se/transtool/validation"
+	"github.com/stts-se/transtool-open/dbapi"
+	"github.com/stts-se/transtool-open/log"
+	"github.com/stts-se/transtool-open/modules"
+	"github.com/stts-se/transtool-open/modules/ffprobe"
+	"github.com/stts-se/transtool-open/protocol"
+	"github.com/stts-se/transtool-open/validation"
 )
 
 var proj *dbapi.Proj

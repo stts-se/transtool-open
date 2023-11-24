@@ -1,5 +1,5 @@
 // config see
-// package validation // import "github.com/stts-se/transtool/validation"
+// package validation // import "github.com/stts-se/transtool-open/validation"
 
 // type Config struct {
 // 	PageStatusNames  string `json:"page_status_names"`
@@ -18,7 +18,7 @@
 
 
 // ValRes see
-// package validation // import "github.com/stts-se/transtool/validation"
+// package validation // import "github.com/stts-se/transtool-open/validation"
 
 // type ValRes struct {
 // 	RuleName   string `json:"rule_name"`
@@ -29,7 +29,7 @@
 
 
 // TrtValidator c.f.
-// package validation // import "github.com/stts-se/transtool/validation"
+// package validation // import "github.com/stts-se/transtool-open/validation"
 
 // type Validator struct {
 // 	// Has unexported fields.

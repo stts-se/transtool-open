@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/stts-se/transtool/protocol"
+	"github.com/stts-se/transtool-open/protocol"
 )
 
 // var (

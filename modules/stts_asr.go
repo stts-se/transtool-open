@@ -13,9 +13,9 @@ import (
 	"context"
 	"path/filepath"
 
-	"github.com/stts-se/transtool/log"
-	"github.com/stts-se/transtool/modules/ffmpeg"
-	"github.com/stts-se/transtool/protocol"
+	"github.com/stts-se/transtool-open/log"
+	"github.com/stts-se/transtool-open/modules/ffmpeg"
+	"github.com/stts-se/transtool-open/protocol"
 )
 
 const debugy = false
@@ -160,7 +160,7 @@ func (aASR SttsASR) Process(config protocol.ASRConfig, audioPath string, chunk p
 		return res, fmt.Errorf("asr response failed: %v", err)
 	}
 
-	//fmt.Println("response Body:", string(body))
+	fmt.Println("response Body:", string(body))
 
 	asrResponse := SttsAsrResponse{}
 	jsonErr := json.Unmarshal(body, &asrResponse)

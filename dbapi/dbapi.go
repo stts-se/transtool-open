@@ -16,9 +16,9 @@ import (
 	// "golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
 
-	"github.com/stts-se/transtool/log"
-	"github.com/stts-se/transtool/protocol"
-	"github.com/stts-se/transtool/validation"
+	"github.com/stts-se/transtool-open/log"
+	"github.com/stts-se/transtool-open/protocol"
+	"github.com/stts-se/transtool-open/validation"
 )
 
 const (

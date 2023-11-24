@@ -1,7 +1,7 @@
 {
     "page_status_names": "normal delete skip",
     "status_names": "unchecked ok ok2 skip",
-    "valid_chars_regexp": "[\\p{L} _.,#!?:'\u00A0-]",
+    "valid_chars_regexp": "[\\p{L} _.,#!?:'\u00A00-9-]",
     "label_prefix": "#",
     "label_suffix": "",
     "labels": "#AGENT #CUSTOMER #OVERLAP #UNKNOWN #NOISE #LAUGH #COUGH #UNTRANSCRIBED #eeh #mm #hmm #åå #mhm",

@@ -8,7 +8,7 @@ import (
 	//"strings"
 	"testing"
 
-	"github.com/stts-se/transtool/protocol"
+	"github.com/stts-se/transtool-open/protocol"
 )
 
 

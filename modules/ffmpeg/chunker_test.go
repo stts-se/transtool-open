@@ -4,7 +4,7 @@ import (
 	"path"
 	"testing"
 
-	"github.com/stts-se/transtool/protocol"
+	"github.com/stts-se/transtool-open/protocol"
 )
 
 func abs(diff int64) int64 {

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/stts-se/transtool/protocol"
+	"github.com/stts-se/transtool-open/protocol"
 )
 
 func TestSearch(t *testing.T) {

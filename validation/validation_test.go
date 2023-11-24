@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/stts-se/transtool/protocol"
+	"github.com/stts-se/transtool-open/protocol"
 )
 
 //func dmmy() { fmt.Println() }

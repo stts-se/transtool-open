@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	//"github.com/stts-se/transtool/dbapi"
-	"github.com/stts-se/transtool/protocol"
+	//"github.com/stts-se/transtool-open/dbapi"
+	"github.com/stts-se/transtool-open/protocol"
 )
 
 type kv struct {

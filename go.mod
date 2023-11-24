@@ -1,4 +1,4 @@
-module github.com/stts-se/transtool
+module github.com/stts-se/transtool-open
 
 go 1.20
 
